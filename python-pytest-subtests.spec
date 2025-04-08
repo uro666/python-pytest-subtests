@@ -1,6 +1,7 @@
 %define module pytest-subtests
 %define oname pytest_subtests
-%bcond_without test
+# disable tests for abf
+%bcond_with test
 
 Name:		python-pytest-subtests
 Version:	0.14.1
