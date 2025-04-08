@@ -1,0 +1,65 @@
+From aa3f96bfb5dfa45c95e0158dc2b76c29157453db Mon Sep 17 00:00:00 2001
+From: Bruno Oliveira <nicoddemus@gmail.com>
+Date: Thu, 26 Dec 2024 19:58:02 -0300
+Subject: [PATCH] Ensure advertised pytest 7.4 compatibility (#182)
+
+Fixes #181
+---
+ .github/workflows/test.yml | 7 ++++++-
+ tests/test_subtests.py     | 4 ++--
+ tox.ini                    | 3 ++-
+ 3 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+index 1ef37c5..d11f6a8 100644
+--- a/.github/workflows/test.yml
++++ b/.github/workflows/test.yml
+@@ -33,6 +33,11 @@ jobs:
+       matrix:
+         os: ["ubuntu-latest", "windows-latest"]
+         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
++        tox_env: ["py"]
++        include:
++          - os: "ubuntu-latest"
++            python: "3.9"
++            tox_env: "pytest7-py"
+ 
+     steps:
+     - uses: actions/checkout@v4
+@@ -56,4 +61,4 @@ jobs:
+     - name: Test
+       shell: bash
+       run: |
+-        tox run -e py --installpkg `find dist/*.tar.gz`
++        tox run -e ${{ matrix.tox_env }} --installpkg `find dist/*.tar.gz`
+diff --git a/tests/test_subtests.py b/tests/test_subtests.py
+index e6c0193..ae08745 100644
+--- a/tests/test_subtests.py
++++ b/tests/test_subtests.py
+@@ -491,8 +491,8 @@ def test_foo(self):
+                     r".* 6 failed, 5 skipped in .*",
+                 ]
+             )
+-            # check with `--no-fold-skipped` (which gives the correct information)
+-            if sys.version_info >= (3, 10):
++            # Check with `--no-fold-skipped` (which gives the correct information).
++            if sys.version_info >= (3, 10) and pytest.version_tuple[:2] >= (8, 3):
+                 result = pytester.runpytest(p, "-v", "--no-fold-skipped", "-rsf")
+                 result.stdout.re_match_lines(
+                     [
+diff --git a/tox.ini b/tox.ini
+index 43c01ac..77c04d8 100644
+--- a/tox.ini
++++ b/tox.ini
+@@ -1,9 +1,10 @@
+ [tox]
+-envlist = py39,py310,py311,py312,py313
++envlist = py39,py310,py311,py312,py313,pytest7
+ 
+ [testenv]
+ deps =
+     pytest-xdist>=3.3.0
++    pytest7: pytest ~=7.4
+ 
+ commands =
+     pytest {posargs:tests}
