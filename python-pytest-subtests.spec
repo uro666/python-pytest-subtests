@@ -6,7 +6,7 @@
 Name:		python-pytest-subtests
 Version:	0.14.1
 Release:	1
-Summary:	unittest subTest() support and subtests fixture
+Summary:	Unittest subTest() support and subtests fixture
 URL:		https://pypi.org/project/pytest-subtests/
 License:	MIT
 Group:		Development/Python
@@ -32,7 +32,7 @@ BuildRequires:	python%{pyver}dist(pytest)
 %endif
 
 %description
-unittest subTest() support and subtests fixture
+unittest subTest() support and subtests fixture.
 
 %prep
 %autosetup -p1 -n %{oname}-%{version}
@@ -50,8 +50,7 @@ pytest -v tests/
 %endif
 
 %files
-%{py_sitedir}/%{oname}.py
-%{py_sitedir}/__pycache__/%{oname}*.pyc
+%{py_sitedir}/%{oname}
 %{py_sitedir}/%{oname}-%{version}.dist-info
 %license LICENSE
-%doc README.md
+%doc README.rst
